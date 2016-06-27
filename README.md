@@ -46,7 +46,7 @@ See the code snippet below for an example of how to implement, or example projec
 	
 ```swift
 // add SKPhoto Array from UIImage
-var images = [SKPhotoProtocol]()
+var images = [SKPhoto]()
 let photo = SKPhoto.photoWithImage(UIImage())// add some UIImage
 images.append(photo) 
 
@@ -60,7 +60,7 @@ presentViewController(browser, animated: true, completion: {})
 from web URLs:
 ```swift
 // URL pattern snippet
-var images = [SKPhotoProtocol]()
+var images = [SKPhoto]()
 let photo = SKPhoto.photoWithImageURL("https://placehold.jp/150x150.png")
 photo.shouldCachePhotoURLImage = false // you can use image cache by true(NSCache)
 images.append(photo)
@@ -73,7 +73,7 @@ presentViewController(browser, animated: true, completion: {})
 from local files:
 ```swift
 // images from local files
-var images = [SKPhotoProtocol]()
+var images = [SKLocalPhoto]()
 let photo = SKLocalPhoto.photoWithImageURL("..some_local_path/150x150.png")
 images.append(photo)
 
@@ -147,20 +147,16 @@ let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedF
 browser.disableVerticalSwipe = true 
 ``` 
 
-#### StatusBar
-you can hide statusbar forcely using property:
-``` swift
-let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
-browser.isForceStatusBarHidden = true 
-``` 
-
 #### Delegate
 There's some trigger point you can handle using delegate. those are optional.
 - didShowPhotoAtIndex(index:Int) 
 - willDismissAtPageIndex(index:Int)
+- willShowActionSheet(photoIndex: Int)
 - didDismissAtPageIndex(index:Int)
 - didDismissActionSheetWithButtonIndex(buttonIndex: Int, photoIndex: Int)
+- didScrollToIndex(index: Int)
 - removePhoto(browser: SKPhotoBrowser, index: Int, reload: (() -> Void))
+- viewForPhoto(browser: SKPhotoBrowser, index: Int) -> UIView?
 
 ```swift
 let browser = SKPhotoBrowser(originImage: originImage, photos: images, animatedFromView: cell)
@@ -180,6 +176,16 @@ func didDismissAtPageIndex(index: Int) {
 }
 
 ```
+
+#### Minor Option
+- blackArea handling which is appearing outside of photo
+- single tap handling, dismiss/noaction
+- bounce animation when appearing/dismissing
+``` swift
+enableZoomBlackArea    = true  // default true
+enableSingleTapDismiss = true  // default false
+bounceAnimation        = true  // default false
+``` 
 
 ## Photos from
 - [Unsplash](https://unsplash.com)

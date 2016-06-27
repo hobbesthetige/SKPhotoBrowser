@@ -77,7 +77,7 @@ public class SKZoomingScrollView: UIScrollView, UIScrollViewDelegate, SKDetectin
     
     public override func layoutSubviews() {
         tapView.frame = bounds
-        indicatorView.frame = frame 
+        indicatorView.frame = bounds
         
         super.layoutSubviews()
         
@@ -193,7 +193,7 @@ public class SKZoomingScrollView: UIScrollView, UIScrollViewDelegate, SKDetectin
         if !flag {
             indicatorView.startAnimating()
             photo.loadUnderlyingImageAndNotify()
-        }else {
+        } else {
             indicatorView.stopAnimating()
         }
         
@@ -270,6 +270,9 @@ public class SKZoomingScrollView: UIScrollView, UIScrollViewDelegate, SKDetectin
     // MARK: - SKDetectingViewDelegate
     func handleSingleTap(view: UIView, touch: UITouch) {
         if photoBrowser?.enableZoomBlackArea == true {
+            if photoBrowser?.areControlsHidden() == false && photoBrowser?.enableSingleTapDismiss == true {
+                photoBrowser?.determineAndClose()
+            }
             photoBrowser?.toggleControls()
         }
     }
@@ -303,11 +306,15 @@ public class SKZoomingScrollView: UIScrollView, UIScrollViewDelegate, SKDetectin
     }
     
     // MARK: - SKDetectingImageViewDelegate
-    func handleImageViewSingleTap(view: UIImageView, touch: UITouch) {
-        photoBrowser?.toggleControls()
+    func handleImageViewSingleTap(touchPoint: CGPoint) {
+        if photoBrowser!.enableSingleTapDismiss {
+            photoBrowser?.determineAndClose()
+        } else {
+            photoBrowser?.toggleControls()
+        }
     }
     
-    func handleImageViewDoubleTap(view: UIImageView, touch: UITouch) {
-        handleDoubleTap(touch.locationInView(view))
+    func handleImageViewDoubleTap(touchPoint: CGPoint) {
+        handleDoubleTap(touchPoint)
     }
 }
