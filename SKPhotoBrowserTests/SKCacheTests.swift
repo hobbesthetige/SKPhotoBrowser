@@ -9,7 +9,6 @@
 import XCTest
 @testable import SKPhotoBrowser
 
-
 class SKCacheTests: XCTestCase {
 
     var cache: SKCache!
@@ -35,8 +34,8 @@ class SKCacheTests: XCTestCase {
 
     func testDefaultCacheImageForKey() {
         // given
-        let cache = (self.cache.imageCache as! SKDefaultImageCache).cache
-        cache.setObject(self.image, forKey: self.key)
+        let cache = (self.cache.imageCache as? SKDefaultImageCache)!.cache
+        cache.setObject(self.image, forKey: self.key as AnyObject)
 
         // when
         let cachedImage = self.cache.imageForKey(self.key)
@@ -50,15 +49,15 @@ class SKCacheTests: XCTestCase {
         self.cache.setImage(self.image, forKey: self.key)
 
         // then
-        let cache = (self.cache.imageCache as! SKDefaultImageCache).cache
-        let cachedImage = cache.objectForKey(self.key) as? UIImage
+        let cache = (self.cache.imageCache as? SKDefaultImageCache)!.cache
+        let cachedImage = cache.object(forKey: self.key as AnyObject) as? UIImage
         XCTAssertNotNil(cachedImage)
     }
 
     func testDefaultCacheRemoveImageForKey() {
         // given
-        let cache = (self.cache.imageCache as! SKDefaultImageCache).cache
-        cache.setObject(self.image, forKey: self.key)
+        let cache = (self.cache.imageCache as? SKDefaultImageCache)!.cache
+        cache.setObject(self.image, forKey: self.key as AnyObject)
 
         // when
         self.cache.removeImageForKey(self.key)
@@ -66,5 +65,24 @@ class SKCacheTests: XCTestCase {
         // then
         let cachedImage = self.cache.imageForKey(self.key)
         XCTAssertNil(cachedImage)
+    }
+    
+    func testDefaultCacheRemoveAllImages() {
+        // given
+        let cache = (self.cache.imageCache as? SKDefaultImageCache)!.cache
+        cache.setObject(self.image, forKey: self.key as AnyObject)
+        
+        let anotherImage = UIImage()
+        let anotherKey = "another_test_image"
+        cache.setObject(anotherImage, forKey: anotherKey as AnyObject)
+        
+        // when
+        self.cache.removeAllImages()
+        
+        // then
+        let cachedImage = self.cache.imageForKey(self.key)
+        let anotherCachedImage = self.cache.imageForKey(anotherKey)
+        XCTAssertNil(cachedImage)
+        XCTAssertNil(anotherCachedImage)
     }
 }
